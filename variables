@@ -1,0 +1,4 @@
+source_location: simple-nodejs-master
+version: 1.0.0
+linux_user: app_user
+user_home_dir: /home/{{linux_user}}
