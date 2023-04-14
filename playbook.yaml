@@ -1,0 +1,45 @@
+- name: Install node and npm
+  hosts: all   
+  tasks:  
+  - name: Update yum repo and cache
+    yum: update_cache=True
+
+  - name: Install nodejs and npm
+    yum: 
+      pkg:
+        - nodejs
+        - npm
+
+- name : Create a new linux user for node app
+  hosts: all
+  tasks:
+  - name: create a new user
+    user:
+      name: app_user
+      comment: app_user admin
+
+- name: Deploy nodejs app
+  hosts: all
+  become: True
+  become_user: app_user
+  tasks:
+    - name: Unpack the nodejs tar file
+      unarchive: 
+        src: simple-nodejs-master/nodejs-app-1.0.0.tgz
+        dest: /home/app_user/
+
+    - name: Install dependencies
+      npm:
+        path: /home/app_user/package/
+
+    - name: Start the application
+      command: 
+        chdir: //home/app_user/package/app
+        cmd: node server
+      async: 1000
+      poll: 0
+
+    - name: Ensure the app
+      shell: ps aux | grep node
+      register: app_status
+    - debug: msg={{app_status.stdout_lines}}
