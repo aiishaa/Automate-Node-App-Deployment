@@ -34,7 +34,7 @@
 
     - name: Start the application
       command: 
-        chdir: //home/app_user/package/app
+        chdir: /home/app_user/package/app
         cmd: node server
       async: 1000
       poll: 0
